@@ -60,8 +60,14 @@ app.post("/template", async (req, res) => {
 
 app.post("/chat", async (req, res) => {
   const messages = req.body.messages;
+  const systemPrompt = getSystemPrompt();
+
+  const formattedMessages= [{role:"system", content:systemPrompt}, 
+    ...messages
+  ]
+
   const response = await openai.chat.completions.create({
-    messages: [messages, { role: "system", content: getSystemPrompt() }],
+    messages:formattedMessages,
     model: "nvidia/llama-3.1-nemotron-70b-instruct",
     max_tokens: 8000,
     temperature: 0,
